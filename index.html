@@ -184,34 +184,97 @@
   <script>
     const noWrap = document.getElementById('noWrap');
     const btnNo  = document.getElementById('btnNo');
-    let escaped = false;
 
-    function escapar() {
-      if (escaped) return;
-      escaped = true;
-      const vw = window.innerWidth;
-      const vh = window.innerHeight;
+    // Posición inicial del botón
+    let posX = null;
+    let posY = null;
+    let moving = false;
+
+    function initPos() {
+      if (posX !== null) return;
       const rect = noWrap.getBoundingClientRect();
-
-      const candidates = [
-        { x: vw - rect.width - 20, y: 20 },
-        { x: 20, y: 20 },
-        { x: vw - rect.width - 20, y: vh - rect.height - 20 },
-        { x: 20, y: vh - rect.height - 20 },
-        { x: (vw - rect.width) / 2, y: 20 },
-      ];
-
-      const pick = candidates[Math.floor(Math.random() * candidates.length)];
+      posX = rect.left;
+      posY = rect.top;
       noWrap.style.position = 'fixed';
-      noWrap.style.left = pick.x + 'px';
-      noWrap.style.top  = pick.y + 'px';
+      noWrap.style.left = posX + 'px';
+      noWrap.style.top  = posY + 'px';
       noWrap.style.zIndex = '10';
-
-      setTimeout(() => { escaped = false; }, 1200);
+      noWrap.style.margin = '0';
     }
 
-    btnNo.addEventListener('mouseenter', escapar);
-    btnNo.addEventListener('touchstart', function(e) { e.preventDefault(); escapar(); });
+    function escapar(mouseX, mouseY) {
+      if (moving) return;
+      moving = true;
+      initPos();
+
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const bw = noWrap.offsetWidth;
+      const bh = noWrap.offsetHeight;
+      const margin = 16;
+
+      // Calcular dirección opuesta al mouse
+      const btnCX = posX + bw / 2;
+      const btnCY = posY + bh / 2;
+      const dx = btnCX - mouseX;
+      const dy = btnCY - mouseY;
+      const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+
+      const stepX = (dx / dist) * 160;
+      const stepY = (dy / dist) * 160;
+
+      let newX = posX + stepX;
+      let newY = posY + stepY;
+
+      // Rebotar en los bordes
+      newX = Math.max(margin, Math.min(vw - bw - margin, newX));
+      newY = Math.max(margin, Math.min(vh - bh - margin, newY));
+
+      // Si quedó en la misma esquina, saltar al lado opuesto
+      if (Math.abs(newX - posX) < 10 && Math.abs(newY - posY) < 10) {
+        newX = posX < vw / 2 ? vw - bw - margin : margin;
+        newY = posY < vh / 2 ? vh - bh - margin : margin;
+      }
+
+      posX = newX;
+      posY = newY;
+
+      noWrap.style.transition = 'left 0.18s ease, top 0.18s ease';
+      noWrap.style.left = posX + 'px';
+      noWrap.style.top  = posY + 'px';
+
+      setTimeout(() => { moving = false; }, 180);
+    }
+
+    // Seguimiento continuo del mouse sobre el botón
+    btnNo.addEventListener('mousemove', function(e) {
+      escapar(e.clientX, e.clientY);
+    });
+
+    btnNo.addEventListener('mouseenter', function(e) {
+      escapar(e.clientX, e.clientY);
+    });
+
+    // Seguimiento del mouse en toda la pantalla cuando está cerca
+    document.addEventListener('mousemove', function(e) {
+      if (posX === null) return;
+      const bw = noWrap.offsetWidth;
+      const bh = noWrap.offsetHeight;
+      const btnCX = posX + bw / 2;
+      const btnCY = posY + bh / 2;
+      const dx = e.clientX - btnCX;
+      const dy = e.clientY - btnCY;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < 80) {
+        escapar(e.clientX, e.clientY);
+      }
+    });
+
+    btnNo.addEventListener('touchstart', function(e) {
+      e.preventDefault();
+      const t = e.touches[0];
+      escapar(t.clientX, t.clientY);
+    });
   </script>
 </body>
 </html>
