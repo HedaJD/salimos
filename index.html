@@ -1,280 +1,142 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>¿Salimos?</title>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      min-height: 100vh;
-      background: #0d1b2e;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      overflow: hidden;
-      position: relative;
-    }
-
-    /* Corazones flotantes */
-    .heart {
-      position: fixed;
-      animation: float var(--d) ease-in-out infinite;
-      animation-delay: var(--delay);
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    @keyframes float {
-      0%, 100% { transform: translateY(0px) rotate(var(--r)); }
-      50%       { transform: translateY(-22px) rotate(var(--r)); }
-    }
-
-    /* Tarjeta central */
-    .card {
-      position: relative;
-      z-index: 1;
-      background: rgba(13, 24, 42, 0.92);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 20px;
-      padding: 2.5rem 2.8rem;
-      max-width: 440px;
-      width: calc(100% - 2rem);
-      text-align: center;
-      backdrop-filter: blur(8px);
-    }
-
-    .badge {
-      display: inline-block;
-      background: rgba(255,255,255,0.07);
-      color: rgba(255,255,255,0.65);
-      font-size: 13px;
-      padding: 5px 16px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.12);
-      margin-bottom: 1.4rem;
-    }
-
-    h1 {
-      color: #ffffff;
-      font-size: 26px;
-      font-weight: 600;
-      line-height: 1.35;
-      margin-bottom: 0.75rem;
-    }
-
-    .subtitle {
-      color: rgba(255,255,255,0.55);
-      font-size: 15px;
-      line-height: 1.55;
-      margin-bottom: 2rem;
-    }
-
-    .buttons {
-      display: flex;
-      gap: 12px;
-      justify-content: center;
-      flex-wrap: wrap;
-      position: relative;
-    }
-
-    .btn-yes {
-      background: #22c55e;
-      color: #fff;
-      border: none;
-      border-radius: 999px;
-      padding: 13px 28px;
-      font-size: 16px;
-      font-weight: 500;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      transition: background 0.15s, transform 0.15s;
-      text-decoration: none;
-    }
-    .btn-yes:hover { background: #16a34a; transform: scale(1.04); }
-
-    .btn-no-wrap {
-      display: inline-block;
-      transition: transform 0.22s ease;
-    }
-
-    .btn-no {
-      background: #ef4444;
-      color: #fff;
-      border: none;
-      border-radius: 999px;
-      padding: 13px 28px;
-      font-size: 16px;
-      font-weight: 500;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      transition: background 0.15s;
-    }
-    .btn-no:hover { background: #dc2626; }
-
-    .footer {
-      margin-top: 1.6rem;
-      color: rgba(255,255,255,0.25);
-      font-size: 12px;
-    }
-
-    /* SVG WhatsApp icon inline */
-    .wa-icon {
-      width: 20px; height: 20px;
-      fill: white;
-      flex-shrink: 0;
-    }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>¿Salimos?</title>
+<style>
+  :root{
+    --bg:#0f172a;      /* fondo */
+    --card:#111827;    /* tarjeta */
+    --txt:#e5e7eb;     /* texto */
+    --accent:#22c55e;  /* verde */
+    --accent2:#ef4444; /* rojo */
+    --btn:#1f2937;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; min-height:100svh; display:grid; place-items:center;
+    background: radial-gradient(1200px 600px at 50% -10%, #1f2937 0%, #0f172a 55%, #0b1324 100%);
+    font-family: ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial;
+    color:var(--txt);
+  }
+  .card{
+    width:min(92vw,520px); background:linear-gradient(180deg,#111827dd,#0b1220ee);
+    border:1px solid #33415555; border-radius:24px; padding:28px; text-align:center;
+    box-shadow:0 20px 60px #0008, inset 0 1px 0 #ffffff10;
+    position:relative; overflow:hidden;
+  }
+  h1{font-size:28px; margin:4px 0 8px}
+  p{opacity:.9; margin:0 0 18px}
+  .tag{display:inline-block; padding:6px 12px; border-radius:999px; font-size:12px;
+       background:#ffffff10; border:1px solid #ffffff20; margin-bottom:10px}
+  .hearts{position:absolute; inset:0; pointer-events:none; opacity:.2; filter:blur(.4px)}
+  .btns{display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:10px}
+  button{
+    appearance:none; border:1px solid #ffffff20; background:var(--btn); color:var(--txt);
+    padding:12px 18px; border-radius:14px; font-size:16px; cursor:pointer;
+    transition:transform .08s ease, background .2s ease, border-color .2s ease, opacity .2s ease;
+  }
+  button:active{transform:scale(.98)}
+  .yes{background:linear-gradient(180deg,#22c55e,#16a34a); border-color:#16a34a}
+  .no{background:linear-gradient(180deg,#ef4444,#b91c1c); border-color:#b91c1c; position:relative}
+  .footer{margin-top:14px; font-size:12px; opacity:.7}
+  .whatsapp{
+    display:none; margin-top:16px; text-decoration:none; color:white; font-weight:600;
+    background:#25D366; padding:12px 16px; border-radius:12px; border:0;
+    box-shadow:0 8px 20px #25d36644;
+  }
+</style>
 </head>
 <body>
-
-  <!-- Corazones decorativos -->
-  <svg class="heart" style="width:190px;top:3%;left:3%;--r:-8deg;--d:5.2s;--delay:0s;" viewBox="0 0 190 170">
-    <path d="M95 148 C65 122,10 88,10 52 C10 26,30 5,57 5 C72 5,85 14,95 28 C105 14,118 5,133 5 C160 5,180 26,180 52 C180 88,125 122,95 148Z" fill="#7c1d2e"/>
+  <svg class="hearts" viewBox="0 0 300 150" preserveAspectRatio="none">
+    <defs>
+      <path id="h" d="M10,30 C10,15 30,10 35,25 C40,10 60,15 60,30 C60,50 35,60 35,60 C35,60 10,50 10,30 Z"/>
+    </defs>
+    <use href="#h" x="20"  y="10" fill="#ef4444"/>
+    <use href="#h" x="140" y="30" fill="#f97316"/>
+    <use href="#h" x="240" y="0"  fill="#22c55e"/>
+    <use href="#h" x="60"  y="70" fill="#3b82f6"/>
+    <use href="#h" x="210" y="90" fill="#eab308"/>
   </svg>
 
-  <svg class="heart" style="width:230px;top:1%;right:2%;--r:6deg;--d:6.8s;--delay:0.8s;" viewBox="0 0 230 210">
-    <path d="M115 185 C78 154,10 112,10 62 C10 31,36 5,68 5 C87 5,104 15,115 30 C126 15,143 5,162 5 C194 5,220 31,220 62 C220 112,152 154,115 185Z" fill="#1a4a3a"/>
-  </svg>
+  <div class="card" id="card">
+    <span class="tag">tengo una propuesta 😈💕</span>
+    <h1 id="title">¿Te gustaría pasar una tarde de domingo conmigo?</h1>
+    <p id="copy">Prometo snacks, mucho cariño y cero estrés. ¿Qué dices?</p>
 
-  <svg class="heart" style="width:170px;bottom:4%;left:16%;--r:5deg;--d:7.2s;--delay:0.4s;" viewBox="0 0 170 155">
-    <path d="M85 134 C58 108,8 76,8 44 C8 21,25 4,48 4 C62 4,74 12,85 25 C96 12,108 4,122 4 C145 4,162 21,162 44 C162 76,112 108,85 134Z" fill="#1d2e4a"/>
-  </svg>
-
-  <svg class="heart" style="width:210px;bottom:2%;right:4%;--r:-5deg;--d:5.8s;--delay:1.4s;" viewBox="0 0 210 188">
-    <path d="M105 165 C72 137,8 100,8 57 C8 28,31 5,60 5 C78 5,94 15,105 29 C116 15,132 5,150 5 C179 5,202 28,202 57 C202 100,138 137,105 165Z" fill="#3a2a10"/>
-  </svg>
-
-  <svg class="heart" style="width:140px;top:28%;left:1%;--r:-10deg;--d:8.5s;--delay:2s;" viewBox="0 0 140 125">
-    <path d="M70 110 C48 88,5 63,5 37 C5 18,19 3,38 3 C50 3,61 10,70 21 C79 10,90 3,102 3 C121 3,135 18,135 37 C135 63,92 88,70 110Z" fill="#7c4a2a" opacity="0.65"/>
-  </svg>
-
-  <!-- Tarjeta -->
-  <div class="card">
-    <span class="badge">tengo una propuesta 💌 ✅</span>
-
-    <h1>¿Te gustaría pasar una tarde de domingo conmigo?</h1>
-
-    <p class="subtitle">Prometo snacks, mucho cariño y cero estrés. ¿Qué dices?</p>
-
-    <div class="buttons">
-      <a class="btn-yes" href="https://wa.me/573138132412?text=¡Sí%2C%20obvio!%20Me%20encantaría%20pasar%20la%20tarde%20contigo%20🥰" target="_blank" rel="noopener">
-        <svg class="wa-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
-        </svg>
-        ¡Sí, obvio!
-      </a>
-
-      <div class="btn-no-wrap" id="noWrap">
-        <button class="btn-no" id="btnNo">
-          Mmm, no sé 😅
-        </button>
-      </div>
+    <div class="btns">
+      <button class="yes" id="yesBtn">¡Sí, obvio! 💚</button>
+      <button class="no" id="noBtn">Mmm, no sé 🤔</button>
     </div>
 
-    <p class="footer">Hecho con cariño ✨</p>
+    <a class="whatsapp" id="waBtn" target="_blank" rel="noopener">
+      Abrir WhatsApp para coordinar 💬
+    </a>
+
+    <div class="footer">Hecho con cariño ✨</div>
   </div>
 
-  <script>
-    const noWrap = document.getElementById('noWrap');
-    const btnNo  = document.getElementById('btnNo');
+<script>
+/* ====== PERSONALIZA ESTO ====== */
+const TU_NOMBRE = "♥";                 // aparece en el mensaje de WhatsApp
+const TU_WHATSAPP = "573138132412";     // pon tu número con indicativo país. Ej: 57 + número (Colombia)
+const MENSAJE_WA = "¡Claro! Quiero pasar este domingo contigo";
+/* =============================== */
 
-    // Posición inicial del botón
-    let posX = null;
-    let posY = null;
-    let moving = false;
+const yesBtn = document.getElementById('yesBtn');
+const noBtn  = document.getElementById('noBtn');
+const waBtn  = document.getElementById('waBtn');
+const card   = document.getElementById('card');
 
-    function initPos() {
-      if (posX !== null) return;
-      const rect = noWrap.getBoundingClientRect();
-      posX = rect.left;
-      posY = rect.top;
-      noWrap.style.position = 'fixed';
-      noWrap.style.left = posX + 'px';
-      noWrap.style.top  = posY + 'px';
-      noWrap.style.zIndex = '10';
-      noWrap.style.margin = '0';
-    }
+yesBtn.addEventListener('click', () => {
+  confetti();
+  yesBtn.textContent = "¡Touch me! 🥳";
+  noBtn.style.display = 'none';
+  waBtn.style.display = 'inline-block';
+  const url = `https://wa.me/${TU_WHATSAPP}?text=${encodeURIComponent(MENSAJE_WA + " " + TU_NOMBRE)}`;
+  waBtn.href = url;
+});
 
-    function escapar(mouseX, mouseY) {
-      if (moving) return;
-      moving = true;
-      initPos();
+let dodgeCount = 0;
+noBtn.addEventListener('mouseenter', moveNo);
+noBtn.addEventListener('touchstart', moveNo, {passive:true});
 
-      const vw = window.innerWidth;
-      const vh = window.innerHeight;
-      const bw = noWrap.offsetWidth;
-      const bh = noWrap.offsetHeight;
-      const margin = 16;
+function moveNo(){
+  dodgeCount++;
+  const rect = card.getBoundingClientRect();
+  const btnRect = noBtn.getBoundingClientRect();
+  const pad = 12;
+  const x = Math.max(pad, Math.min(rect.width - btnRect.width - pad, Math.random()*(rect.width - btnRect.width - pad)));
+  const y = Math.max(60, Math.min(rect.height - btnRect.height - 20, Math.random()*(rect.height - btnRect.height - 20)));
+  noBtn.style.position = 'absolute';
+  noBtn.style.left = x + 'px';
+  noBtn.style.top  = y + 'px';
+  noBtn.textContent = dodgeCount > 2 ? "Ok ok 😅" : "Mmm, no sé 🤔";
+}
 
-      // Calcular dirección opuesta al mouse
-      const btnCX = posX + bw / 2;
-      const btnCY = posY + bh / 2;
-      const dx = btnCX - mouseX;
-      const dy = btnCY - mouseY;
-      const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-
-      const stepX = (dx / dist) * 160;
-      const stepY = (dy / dist) * 160;
-
-      let newX = posX + stepX;
-      let newY = posY + stepY;
-
-      // Rebotar en los bordes
-      newX = Math.max(margin, Math.min(vw - bw - margin, newX));
-      newY = Math.max(margin, Math.min(vh - bh - margin, newY));
-
-      // Si quedó en la misma esquina, saltar al lado opuesto
-      if (Math.abs(newX - posX) < 10 && Math.abs(newY - posY) < 10) {
-        newX = posX < vw / 2 ? vw - bw - margin : margin;
-        newY = posY < vh / 2 ? vh - bh - margin : margin;
-      }
-
-      posX = newX;
-      posY = newY;
-
-      noWrap.style.transition = 'left 0.18s ease, top 0.18s ease';
-      noWrap.style.left = posX + 'px';
-      noWrap.style.top  = posY + 'px';
-
-      setTimeout(() => { moving = false; }, 180);
-    }
-
-    // Seguimiento continuo del mouse sobre el botón
-    btnNo.addEventListener('mousemove', function(e) {
-      escapar(e.clientX, e.clientY);
-    });
-
-    btnNo.addEventListener('mouseenter', function(e) {
-      escapar(e.clientX, e.clientY);
-    });
-
-    // Seguimiento del mouse en toda la pantalla cuando está cerca
-    document.addEventListener('mousemove', function(e) {
-      if (posX === null) return;
-      const bw = noWrap.offsetWidth;
-      const bh = noWrap.offsetHeight;
-      const btnCX = posX + bw / 2;
-      const btnCY = posY + bh / 2;
-      const dx = e.clientX - btnCX;
-      const dy = e.clientY - btnCY;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < 80) {
-        escapar(e.clientX, e.clientY);
-      }
-    });
-
-    btnNo.addEventListener('touchstart', function(e) {
-      e.preventDefault();
-      const t = e.touches[0];
-      escapar(t.clientX, t.clientY);
-    });
-  </script>
+/* confeti minimal */
+function confetti(){
+  const N = 120;
+  for(let i=0;i<N;i++){
+    const p = document.createElement('div');
+    const s = Math.random()*6+4;
+    p.style.position='fixed';
+    p.style.width=s+'px';
+    p.style.height=s+'px';
+    p.style.left=(Math.random()*100)+'vw';
+    p.style.top='-10px';
+    p.style.background=`hsl(${Math.random()*360},90%,60%)`;
+    p.style.borderRadius='2px';
+    p.style.pointerEvents='none';
+    p.style.transition='transform 1.2s ease-out, opacity 1.2s ease-out';
+    p.style.transform=`translateY(${(60+Math.random()*90)}vh) rotate(${Math.random()*720-360}deg)`;
+    p.style.opacity='0';
+    document.body.appendChild(p);
+    requestAnimationFrame(()=>{ p.style.opacity='1'; });
+    setTimeout(()=>{ p.remove(); }, 1400 + Math.random()*400);
+  }
+}
+</script>
 </body>
 </html>
